@@ -1,0 +1,49 @@
+---
+title: "About.RMD"
+author: "Scott"
+date: "2/28/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(rvest)
+library(xml2)
+library(readxl)
+library(janitor)
+```
+The purpose of this project is to explore an MLB team's number of wins per season with a number of variables. Some of these variables might be obvious to make a hypothesis about, such as salary and total runs, whereas I'm particularly interested in exploring variables with less obvious correlations. Particularly, I'm curious about how the attendance, number of errors, and number of off season transactions influence how a team places. I'm still debating on if I want to do a general analysis for all 30 teams, or if I want to dive deeper into one team, perhaps the Cleveland Indians which are my favorite MLB team. I'm also considering exploring how having a player in ESPN's top 50 players impacts outcome, to see if having a star player impacts outcome (which I think is more interesting than other sports where a star player obviously impacts the outcome). 
+
+
+
+```{r}
+
+# I know this code is not perfect, but I think it is a very good start. I
+# believe there is a more efficient way to join 3 tables, but I'm still thinking
+# through how many tables I want to join, so I figured I could get to this later
+# on. Also, I was working on the suffixes to the different categories. I had to
+# do a lot of data cleaning in Excel, which took up some time before I exported.
+# I also plan on scraping data off the internet for data that is more difficult
+# to export than the current data I have in the table.
+
+wins <- read_excel("raw-data/MLBwins.xlsx") 
+```
+```{r}
+battingaverage <- read_excel("raw-data/MLBbattingaverage.xlsx") 
+```
+```{r}
+errors <- read_excel("raw-data/MLBerrors.xlsx")
+```
+```{r}
+join1 <- wins %>%
+  full_join(battingaverage, c("ABBBR" = "ABBR"), ("year" = "year"), ("name" = "name"), 
+            suffix = c("_wins", "_battingaverage")) %>%
+  view()
+```
+```{r}
+join2 <- join1 %>%
+  full_join (errors, c("ABBBR" = "ABBR"), ("year" = "year"), ("name" = "team"), suffix = c("_errors", "_wins")) %>%
+  view()
+```
+
